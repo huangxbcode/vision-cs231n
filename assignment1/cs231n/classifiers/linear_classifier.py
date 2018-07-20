@@ -54,6 +54,9 @@ class LinearClassifier(object):
       # replacement is faster than sampling without replacement.              #
       #########################################################################
       pass
+      batch_index = np.random.choice(num_train, batch_size)
+      X_batch = X[batch_index, :]
+      y_batch = y[batch_index]
       #########################################################################
       #                       END OF YOUR CODE                                #
       #########################################################################
@@ -68,6 +71,7 @@ class LinearClassifier(object):
       # Update the weights using the gradient and the learning rate.          #
       #########################################################################
       pass
+      self.W -= learning_rate * grad
       #########################################################################
       #                       END OF YOUR CODE                                #
       #########################################################################
