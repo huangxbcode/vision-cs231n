@@ -101,6 +101,7 @@ class LinearClassifier(object):
     # Implement this method. Store the predicted labels in y_pred.            #
     ###########################################################################
     pass
+    y_pred = np.argmax(np.dot(X, self.W), axis=1)  #返回每行最大值的index
     ###########################################################################
     #                           END OF YOUR CODE                              #
     ###########################################################################
