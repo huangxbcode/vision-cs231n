@@ -30,7 +30,24 @@ def softmax_loss_naive(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  num_train = X.shape[0]
+  num_classes = W.shape[1]
+  for i in range(num_train):
+    fi = X[i,:].dot(W)
+    fi -= np.max(fi)
+    exp_sum = np.sum(np.exp(fi))
+    p = lambda k: np.exp(fi[k]) / exp_sum
+    pi = p(y[i])
+    loss += -np.log(pi)  # 求和，之后还要求均值
+    
+    for k in range(num_classes):
+        pk = p(k)
+        dW[:, k] = (pk - (k == y[i])) * X[i]
+
+  loss /= num_train
+  loss += 0.5 * reg * np.sum(W * W)
+  dW /= num_train
+  dW += reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -54,7 +71,33 @@ def softmax_loss_vectorized(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  num_train = X.shape[0]
+  num_classes = W.shape[1]
+
+  f_vec = X.dot(W)
+  f_vec -= np.max(f_vec, axis=1, keepdims=True)
+  exp_sum_vec = np.sum(np.exp(f_vec), axis=1, keepdims=True)
+  p_vec = np.exp(f_vec) / exp_sum_vec
+  loss = np.sum(-1 * np.log(p_vec[np.arange(num_train), y]))  # 求和，之后还要求均值
+
+  ind = np.zeros_like(p_vec)
+  ind[np.arange(num_train), y] = 1
+  dW = X.T.dot(p_vec - ind)
+
+  loss /= num_train
+  loss += 0.5 * reg * np.sum(W * W)
+  dW /= num_train
+  dW += reg * W
+    
+#   num_train, dim = X.shape
+#   f = X.dot(W)  # N by C
+#   # Considering the Numeric Stability
+#   f_max = np.reshape(np.max(f, axis=1), (num_train, 1))  # N by 1
+#   prob = np.exp(f - f_max) / np.sum(np.exp(f - f_max), axis=1, keepdims=True) #计算各分类概率
+#   y_trueClass = np.zeros_like(prob)
+#   y_trueClass[range(num_train), y] = 1.0  # N by C
+#   loss += -np.sum(y_trueClass * np.log(prob)) / num_train + 0.5 * reg * np.sum(W * W) #将所有正确分类的项计入loss，y_trueClass 相当于mask
+#   dW += -np.dot(X.T, y_trueClass - prob) / num_train + reg * W  #根据推导的公式可写出
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
