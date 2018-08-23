@@ -291,7 +291,7 @@ class Solver(object):
                 self.val_acc_history.append(val_acc)
                 self._save_checkpoint()
 
-                if self.verbose:
+                if self.verbose and t % self.print_every == 0:
                     print('(Epoch %d / %d) train acc: %f; val_acc: %f' % (
                            self.epoch, self.num_epochs, train_acc, val_acc))
 
